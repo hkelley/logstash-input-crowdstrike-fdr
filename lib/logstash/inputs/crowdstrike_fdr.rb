@@ -110,42 +110,7 @@ class LogStash::Inputs::CrowdStrikeFDR < LogStash::Inputs::Threadable
 
   config_name "crowdstrike_fdr"    # needs to match the name of this file
 
-  default :codec, "plain"
-
-
-
-  # Future config might look somewhat like this:
-  #
-  # s3_options_by_bucket = [
-  #   {
-  #     "bucket_name": "my-beautiful-bucket",
-  #     "credentials": { "role": "aws:role:arn:for:bucket:access" },
-  #     "folders": [
-  #       {
-  #         "key": "my_folder",
-  #         "codec": "json"
-  #         "type": "my_lovely_index"
-  #       },
-  #       {
-  #         "key": "my_other_folder",
-  #         "codec": "json_stream"
-  #         "type": ""
-  #       }
-  #     ]
-  #   },
-  #   {
-  #     "bucket_name": "my-other-bucket"
-  #     "credentials": {
-  #        "access_key_id": "some-id",
-  #        "secret_access_key": "some-secret-key"
-  #     },
-  #     "folders": [
-  #       {
-  #         "key": ""
-  #       }
-  #     ]
-  #   }
-  # }
+  default :codec, "json"  #  FDR uses json,  base project defaulted to "plain"
 
   config :s3_key_prefix, :validate => :string, :default => '', :deprecated => true #, :obsolete => " Will be moved to s3_options_by_bucket/types"
 
@@ -171,8 +136,9 @@ class LogStash::Inputs::CrowdStrikeFDR < LogStash::Inputs::Threadable
   # Name of the SQS Queue to pull messages from. Note that this is just the name of the queue, not the URL or ARN.
   config :queue, :validate => :string, :required => true
   config :queue_owner_aws_account_id, :validate => :string, :required => false
-  # Whether the event is processed though an SNS to SQS. (S3>SNS>SQS = true |S3>SQS=false)
-  config :from_sns, :validate => :boolean, :default => true
+  
+  # CrowdStrike FDR does not use SNS so set the default to match
+  config :from_sns, :validate => :boolean, :default => false
   config :sqs_skip_delete, :validate => :boolean, :default => false
   config :sqs_wait_time_seconds, :validate => :number, :required => false
   config :sqs_delete_on_failure, :validate => :boolean, :default => true

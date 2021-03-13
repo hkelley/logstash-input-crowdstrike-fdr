@@ -1,4 +1,4 @@
-:plugin: logstash-input-s3-sns-sqs
+:plugin: logstash-input-crowdstrike_fdr
 :type: input
 :default_codec: json
 
@@ -38,7 +38,7 @@ multiple logstash instances.
 Example:
 [source,ruby]
 input {
-  s3snssqs {
+  crowdstrike_fdr {
     region                     => "eu-central-1"
     s3_default_options         => { "endpoint_discovery" => true }
     queue                      => "logingest-sqs-queue"
@@ -64,7 +64,7 @@ input {
     ]
   }
 }
-==== S3-SNS-SQS Input Configuration Options
+==== CrowdStrikeFDR Input Configuration Options
 
 This plugin supports the following configuration options plus the <<plugins-{type}s-{plugin}-common-options>> described later.
 
@@ -72,13 +72,7 @@ This plugin supports the following configuration options plus the <<plugins-{typ
 |=======================================================================
 |Setting |Input type|Required
 | <<plugins-{type}s-{plugin}-queue>> |a valid queue name|Yes
-| <<plugins-{type}s-{plugin}-queue_owner_aws_account_id>> |<<string,string>>|No
-| <<plugins-{type}s-{plugin}-s3_options_by_bucket>> |<<array,array>>|No
-| <<plugins-{type}s-{plugin}-s3_default_options>> |<<hash,hash>>|No
-| <<plugins-{type}s-{plugin}-s3_role_session_name>> |<<string,string>>|yes
 | <<plugins-{type}s-{plugin}-delete_on_success>>|<<boolean,boolean>>|No
-| <<plugins-{type}s-{plugin}-include_object_properties>>|<<array,array>>|No
-| <<plugins-{type}s-{plugin}-from_sns>> |<<boolean,boolean>>|No
 | <<plugins-{type}s-{plugin}-sqs_skip_delete>> |<<boolean,boolean>>|No
 | <<plugins-{type}s-{plugin}-sqs_delete_on_failure>> |<<boolean,boolean>>|No
 | <<plugins-{type}s-{plugin}-temporary_directory>> |<<string,string>>|No
@@ -99,65 +93,18 @@ input plugins.
   * Value type is <<string,string>>
   * There is no default value for this setting.
 
-a valid SQS queue name or queue url
+a valid SQS queue name or queue url in new URL format:     https://github.com/aws/aws-sdk-ruby/issues/1620
 
-[id="plugins-{type}s-{plugin}-queue_owner_aws_account_id"]
-===== `queue_owner_aws_account_id` 
+e.g. https://sqs.us-west-1.amazonaws.com/.....
 
-  * Value type is <<string,string>>
-  * There is no default value for this setting.
 
-Do you need to change the aws account?
-
-[id="plugins-{type}s-{plugin}-s3_options_by_bucket"]
-===== `s3_options_by_bucket` 
-
-  * Value type is <<array,array>>
-  * There is no default value for this setting.
-
-If you have credentials per s3 bucket you could overwrite the default.
-If you have different formats (json, plain) in you subfolders 
-you could overwrite you default by folder.
-
-Example:
-[source,ruby]
-    s3_options_by_bucket       => [
-        { bucket_name => "logs-bucket-222222222222-.*"
-          credentials => { role => "arn:aws:iam::222222222222:role/logging-role" }
-        },
-        { bucket_name => "logs-bucket-333333333333-eu-central-1"
-          credentials => { role => "arn:aws:iam::333333333333:role/logging-role" }
-          folders => [
-          { key => ".*/waflogs.*"
-            codec => "json_stream"
-            type => "waflogs"},
-          { key => ".*/2020"
-            codec => "json_lines"
-            type => "reports"}]
-        }
-    ]
-
-[id="plugins-{type}s-{plugin}-s3_default_options"]
-===== `s3_default_options` 
-
-  * Value type is <<hash,hash>>
-  * There is no default value for this setting.
-
-Add default options for the ruby aws s3::Client
-ATTENTION: Dont use symbols for the option key. This will break the logstash config parser.
-
-Example:
-[source,ruby]
-  s3_default_options         => { "endpoint_discovery" => true }
-  
-  
-[id="plugins-{type}s-{plugin}-s3_role_session_name"]
-===== `s3_role_session_name` 
+[id="plugins-{type}s-{plugin}-region"]
+===== `region` 
 
   * Value type is <<string,string>>
-  * Default value is "logstash"
+  * There is no default value for this setting.
 
-Set S3::Clients Session name
+AWS region for S3 operations
 
 [id="plugins-{type}s-{plugin}-delete_on_success"]
 ===== `delete_on_success` 
@@ -167,30 +114,6 @@ Set S3::Clients Session name
 
 delete files from S3 after success
 
-[id="plugins-{type}s-{plugin}-include_object_properties"]
-===== `include_object_properties`
-
-  * Value type is <<array,array>>
-  * The default value for this setting is [:last_modified, :content_type, :metadata]
-
-
-include object properties from S3 files and add as metadata to the logstash event.
-This properties are accessible inside of the logstash pipeline:
-
-Example:
-[source,ruby]
-    mutate {
-        add_field => {
-            "meta-s3-content_type" => "%{[@metadata][s3][content_type]}"
-        }
-
-[id="plugins-{type}s-{plugin}-from_sns"]
-===== `from_sns` 
-
-  * Value type is <<boolean,boolean>>
-  * Default: true
-
-The message format is different, if the message comes from SNS.
 
 [id="plugins-{type}s-{plugin}-sqs_skip_delete"]
 ===== `sqs_skip_delete` 

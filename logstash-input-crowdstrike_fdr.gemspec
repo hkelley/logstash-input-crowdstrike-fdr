@@ -4,9 +4,9 @@ Gem::Specification.new do |s|
   s.licenses        = ['Apache-2.0']
   s.summary         = "Get logs from AWS s3 buckets as issued by Crowdstrike Falcon Data Replicator"
   s.description     = "This gem is a logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/plugin install gemname. This gem is not a stand-alone program"
-  s.authors         = ["Christian Herweg"]
-  s.email           = 'christian.herweg@gmail.com'
-  s.homepage        = "https://github.com/hkelley/logstash-input-crowdstrike-fdr"
+  s.authors         = ["Christian Herweg","Hugh Kelley"]
+  s.email           = 'hugh.kelley@gmail.com'
+  s.homepage        = "https://github.com/hkelley/logstash-input-crowdstrike_fdr"
   s.require_paths = ["lib"]
 
   # Files

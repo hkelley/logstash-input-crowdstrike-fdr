@@ -1,7 +1,7 @@
 # encoding: utf-8
 require "logstash/devutils/rspec/spec_helper"
 require "logstash/plugin"
-require "logstash/inputs/s3snssqs"
+require "logstash/inputs/crowdstrike_fdr"
 require "fileutils"
 require "logstash/errors"
 require "logstash/event"
@@ -13,13 +13,13 @@ require 'rspec/expectations'
 
 
 
-describe LogStash::Inputs::S3SNSSQS do
-  class LogStash::Inputs::S3SNSSQS
+describe LogStash::Inputs::CrowdStrikeFDR do
+  class LogStash::Inputs::CrowdStrikeFDR
     public :process # use method without error logging for better visibility of errors
   end
   let(:codec_options) { {} }
 
-  let(:input) { LogStash::Inputs::S3SNSSQS.new(config) }
+  let(:input) { LogStash::Inputs::CrowdStrikeFDR.new(config) }
 
   let(:codec_factory) { CodecFactory.new(@logger, { default_codec: @codec, codec_by_folder: @codec_by_folder }) }
   subject { input }
@@ -43,7 +43,7 @@ describe LogStash::Inputs::S3SNSSQS do
   context 'compressed_log_file' do
 
     subject do
-      LogStash::Inputs::S3SNSSQS.new(config)
+      LogStash::Inputs::CrowdStrikeFDR.new(config)
     end
  #   end
     let(:queue) { [] }
