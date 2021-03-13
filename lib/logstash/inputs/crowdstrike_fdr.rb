@@ -103,11 +103,12 @@ Aws.eager_autoload!
 #       ]
 #   }
 #
-class LogStash::Inputs::S3SNSSQS < LogStash::Inputs::Threadable
+class LogStash::Inputs::CrowdStrikeFDR < LogStash::Inputs::Threadable
   include LogStash::PluginMixins::AwsConfig::V2
   include LogProcessor
 
-  config_name "s3snssqs"
+
+  config_name "crowdstrike_fdr"    # needs to match the name of this file
 
   default :codec, "plain"
 

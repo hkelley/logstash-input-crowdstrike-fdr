@@ -145,30 +145,38 @@ class SqsPoller
     @stopped.value
   end
 
+  # Customization to parse CrowdStrike Falcon Data Replicator queue messages
   def preprocess(message)
-    @logger.debug("Inside Preprocess: Start", :event => message)
+    @logger.debug("Inside FDR Queue Preprocess: Start", :event => message)
     payload = JSON.parse(message.body)
     payload = JSON.parse(payload['Message']) if @from_sns
     @logger.debug("Payload in Preprocess: ", :payload => payload)
-    return nil unless payload['Records']
-    payload['Records'].each do |record|
-      @logger.debug("We found a record", :record => record)
+
+    # skip files other than aidmaster data  (for now)
+    return nil unless payload['files'] and (payload['pathPrefix'].start_with?("data/") or payload['pathPrefix'].start_with?("aidmaster/"))
+	
+  	bucket = payload['bucket']
+    payload['files'].each do |file|
+      @logger.debug("We found a file", :file => file)
       # in case there are any events with Records that aren't s3 object-created events and can't therefore be
       # processed by this plugin, we will skip them and remove them from queue
-      if record['eventSource'] == EVENT_SOURCE and record['eventName'].start_with?(EVENT_TYPE) then
-        @logger.debug("record is valid")
-        bucket  = CGI.unescape(record['s3']['bucket']['name'])
-        key     = CGI.unescape(record['s3']['object']['key'])
-        size    = record['s3']['object']['size']
+#      if record['eventSource'] == EVENT_SOURCE and record['eventName'].start_with?(EVENT_TYPE) then
+        key  = file['path']
+		    @logger.debug("We found a file", :key => key)
+        size    = file['size']
+		    @logger.debug("We found a file", :size => size)
+		
         yield({
           bucket: bucket,
           key: key,
           size: size,
           folder: get_object_path(key)
         })
-      end
+      #end
     end
   end
+
+
 
   # Runs an AWS request inside a Ruby block with an exponential backoff in case
   # we experience a ServiceError.

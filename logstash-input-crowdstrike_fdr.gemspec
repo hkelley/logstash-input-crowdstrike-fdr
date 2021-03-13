@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
-  s.name            = 'logstash-input-s3-sns-sqs'
+  s.name            = 'logstash-input-crowdstrike_fdr'
   s.version         = '2.1.2'
   s.licenses        = ['Apache-2.0']
-  s.summary         = "Get logs from AWS s3 buckets as issued by an object-created event via sns -> sqs."
+  s.summary         = "Get logs from AWS s3 buckets as issued by Crowdstrike Falcon Data Replicator"
   s.description     = "This gem is a logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/plugin install gemname. This gem is not a stand-alone program"
   s.authors         = ["Christian Herweg"]
   s.email           = 'christian.herweg@gmail.com'
-  s.homepage        = "https://github.com/cherweg/logstash-input-s3-sns-sqs"
+  s.homepage        = "https://github.com/hkelley/logstash-input-crowdstrike-fdr"
   s.require_paths = ["lib"]
 
   # Files
