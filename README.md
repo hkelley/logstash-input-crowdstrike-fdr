@@ -10,6 +10,11 @@ Gets aidmaster and data files from CrowdStrike Falcon Data Replicator.  Returns 
 
 This plugin is based on the logstash-input-s3-sns-sqs plugin ( https://github.com/cherweg/logstash-input-s3-sns-sqs ).   Minor modifications have been made to match the FDR schema.
 
+
+## Installation
+
+logstash-plugin install logstash-input-crowdstrike_fdr
+
 ## Example
 
 input { 
